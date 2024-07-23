@@ -114,7 +114,7 @@
                 android:layout_weight="1">
 
                 <ImageView
-                    android:id="@+id/meme_five"
+                    android:id="@+id/memeFive"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
@@ -129,7 +129,7 @@
                 android:layout_weight="1">
 
                 <ImageView
-                    android:id="@+id/meme_six"
+                    android:id="@+id/memeSix"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
@@ -151,7 +151,7 @@
                 android:layout_weight="1">
 
                 <ImageView
-                    android:id="@+id/meme_seven"
+                    android:id="@+id/memeSeven"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
@@ -166,7 +166,7 @@
                 android:layout_weight="1">
 
                 <ImageView
-                    android:id="@+id/meme_eight"
+                    android:id="@+id/memeEight"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
