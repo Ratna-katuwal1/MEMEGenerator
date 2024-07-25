@@ -2,6 +2,7 @@ package com.ratna.memegenerator;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -56,12 +58,35 @@ public class MemeGenerator extends AppCompatActivity {
        String drawableName = getIntent().getStringExtra("drawableName");
        int resourceID = getResources().getIdentifier(drawableName, "drawable", getPackageName());
        memeImageView.setImageResource(resourceID);
+
        generateButton.setOnClickListener(view -> {
-           generateMeme();
+           AlertDialog.Builder builder = new AlertDialog.Builder(MemeGenerator.this);
+           builder.setTitle("Saved to gallery");
+           builder.setMessage("Are you sure want to save this message to your gallery");
+
+           builder.setPositiveButton("yes", (dialogInterface, which) -> {
+               generateMeme();
+               finish();
+           });
+
+           builder.setNegativeButton("No", (dialogInterface, which) -> {
+               dialogInterface.dismiss();
+           });
+
+           AlertDialog alert = builder.create();
+           alert.show();
        });
     }
 
-    private void generateMeme() {
+    void updateTopText(String updateText){
+        topTextView.setText(updateText);
+    }
+
+    void updateBottomText(String updateText){
+        bottomTextView.setText(updateText);
+    }
+
+    void generateMeme() {
         if (checkPermission()){
             saveLayoutToGallery();
         } else {
@@ -70,7 +95,7 @@ public class MemeGenerator extends AppCompatActivity {
     }
     private boolean checkPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
-            int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int result = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
             return result == PackageManager.PERMISSION_GRANTED;
         } else {
             return true;
@@ -79,15 +104,15 @@ public class MemeGenerator extends AppCompatActivity {
 
     private void requestPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResutls) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResutls);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE){
-            if (grantResutls.length > 0 && grantResutls[0] == PackageManager.PERMISSION_GRANTED){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 saveLayoutToGallery();
             } else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
@@ -121,13 +146,15 @@ public class MemeGenerator extends AppCompatActivity {
         if (!storageDir.exists()) {
             storageDir.mkdirs();
         }
+
         File imageFile = new File(storageDir, imageFileName);
         saveImagePath = imageFile.getAbsolutePath();
-        Context context = null;
+
         try {
             OutputStream fOut = new FileOutputStream(imageFile);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
             fOut.close();
+
             MediaScannerConnection.scanFile(null, new String[]{imageFile.toString()}, null, new MediaScannerConnection.OnScanCompletedListener() {
                 @Override
                 public void onScanCompleted(String path, Uri uri) {

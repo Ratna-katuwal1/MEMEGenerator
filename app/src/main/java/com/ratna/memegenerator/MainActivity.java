@@ -59,11 +59,9 @@ public class MainActivity extends AppCompatActivity {
         memeEight.setOnClickListener(view -> {
             gotoGenerateMemeScreen(8);
         });
-
-
     }
 
-    private void gotoGenerateMemeScreen(int name) {
+    void gotoGenerateMemeScreen(int name) {
         Intent intent = new Intent(this, MemeGenerator.class);
         intent.putExtra("drawableName", "meme" + name);
         startActivity(intent);
